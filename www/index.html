@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مرصد اخباري شامل — منصة المراقبة الإخبارية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/svg+xml" href="./logo.svg" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles-v2.css" />
+<link rel="icon" type="image/svg+xml" href="logo.svg" />
+</head>
+<body>
+<div id="breaking-bar" class="breaking-bar" style="display:none">
+  🚨 BREAKING MILITARY EVENT
+</div>  
+<div class="boot">
+  <div class="boot-logo">
+    <img src="./logo.svg" class="boot-bird" />
+  </div>
+  <div class="boot-brand">
+      مرصد اخباري شامل
+  </div>
+  <div class="boot-progress"><div class="boot-progress-bar"></div></div>
+  <div class="boot-log">› جاري التشغيل</div>
+</div>
+<div class="grid-overlay"></div>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="globe-wrap"><div id="globe"></div></div>
+<div class="globe-glow"></div>
+<div class="top-chrome">
+  <div class="panel logo-card">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="logo-mark">
+          <div class="logo-ring"></div>
+          <div class="logo-ring r2"></div>
+          <div class="logo-ring r3"></div>
+          <img src="./logo.svg" alt="مرصد اخباري شامل" class="logo-image" />
+        </div>
+        <div class="logo-text">
+              <div class="brand">مرصد·<b>اخباري</b></div>
+              <div class="sub">الإصدار 0.1</div>
+            </div>
+      </div>
+  <div class="panel stats-bar">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="stat">
+      <span class="label">التوقيت العالمي</span>
+      <span class="val"><span id="clock">00:00:00</span></span>
+      <span style="font-family:var(--mono);font-size:9px;color:var(--ink-ghost);letter-spacing:0.18em;margin-top:2px" id="datecode">2026.04.20</span>
+    </div>
+    <div class="stat">
+      <span class="label">الأحداث · 24 ساعة</span>
+      <span class="val"><span id="stat-events">0</span><span class="delta">+184</span></span>
+    </div>
+    <div class="stat">
+      <span class="label">المناطق النشطة</span>
+      <span class="val"><span id="stat-regions">0</span><span class="unit">/195</span></span>
+    </div>
+    <div class="stat threat">
+      <span class="label">مستوى التهديد</span>
+      <span class="val" id="global-threat">LOW</span>
+    </div>
+  </div>
+</div>
+<div class="toolbar">
+  <div class="toolbar-section tabs">
+    <button class="tab active" data-view="live"><span class="n">01</span> الخريطة المباشرة</button>
+    <button class="tab" data-view="timeline"><span class="n">02</span> الجدول الزمني</button>
+    <button class="tab" data-view="network"><span class="n">03</span> الشبكة</button>
+    <button class="tab" data-view="analytics"><span class="n">04</span> التحليلات</button>
+  </div>
+  <div class="toolbar-section filters">
+    <button class="tbtn">المنطقة · عالمي <span class="caret">▾</span></button>
+    <button class="tbtn">النافذة · 24 ساعة <span class="caret">▾</span></button>
+  </div>
+  <div class="toolbar-spacer"></div>
+  <div class="toolbar-section search-section">
+    <div class="tsearch">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5"/><path d="M11 11 L14 14"/></svg>
+      <input id="search-input" placeholder="انتقل إلى مدينة أو دولة أو فاعل…" />
+      <span class="kbd">⌘K</span>
+    </div>
+  </div>
+  <div class="toolbar-section tools">
+    <button class="tbtn" id="density-btn" title="الكثافة">
+      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 3 H11 M1 6 H11 M1 9 H11"/></svg>
+    </button>
+    <button class="tbtn" id="auto-btn"><span>⟳</span> تلقائي <span class="caret">إيقاف</span></button>
+    <button class="tbtn">⬇ تصدير</button>
+  </div>
+</div>
+<div class="rail-l">
+  <div class="panel">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="panel-head">
+      <h3><b>01</b> تصنيف الحدث</h3>
+      <span class="meta">5 / 5</span>
+    </div>
+    <div class="cat-list" id="cat-list"></div>
+  </div>
+  <div class="panel">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="panel-head">
+      <h3><b>02</b> مؤشر التهديد الإقليمي</h3>
+      <span class="meta">عالمي</span>
+    </div>
+    <div class="threat-panel">
+      <div class="threat-bar">
+        <div class="threat-seg on" style="color:#06d6a0"></div>
+        <div class="threat-seg on" style="color:#06d6a0"></div>
+        <div class="threat-seg on" style="color:#ffbc42"></div>
+        <div class="threat-seg on" style="color:#ffbc42"></div>
+        <div class="threat-seg" style="color:#ff3860"></div>
+      </div>
+      <div class="threat-labels">
+        <span class="l1">هادئ</span>
+        <span class="l2">مرتفع</span>
+        <span class="l3">حرج</span>
+      </div>
+      <div class="threat-current">
+        <span class="lbl">الحالي</span>
+        <span class="vl">مرتفع · T3</span>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="panel-head">
+      <h3><b>03</b> قائمة المراقبة الإقليمية</h3>
+      <span class="meta">σ · 1 ساعة</span>
+    </div>
+    <div class="watchlist" id="watchlist"></div>
+  </div>
+</div>
+<div class="rail-r">
+<div class="panel feed-panel">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="panel-head">
+      <h3><b id="feed-count">0</b> البث الوارد · الأحداث المباشرة</h3>
+      <span class="live-pill"><i></i>مباشر</span>
+    </div>
+    <div class="clear-feed-wrapper">
+      <button class="clear-feed-btn" title="مسح القائمة">🗑️ مسح القائمة</button>
+    </div>
+    <div class="keyword-search-wrapper">
+    <input type="text" id="keyword-input" placeholder="أدخل كلمات مفتاحية مفصولة بفاصلة" class="keyword-input">
+    <button class="keyword-search-btn" id="keyword-search-btn">🔍 بحث</button>
+    <button class="keyword-clear-btn" id="keyword-clear-btn">✕ إلغاء البحث</button>
+    </div>    
+    <div class="export-feed-wrapper">
+      <button class="export-feed-btn json-btn" title="تصدير JSON">📥 JSON</button>
+      <button class="export-feed-btn csv-btn" title="تصدير CSV">📊 CSV</button>
+    </div>    
+    <div class="feed-filters">
+    <button class="feed-filter-btn factive" data-feed-filter="all">
+    <span class="fpulse"></span>
+    الكل
+    <span class="fbadge" id="fbadge-all">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="conflict">
+    <span class="fpulse"></span>
+    صراع
+    <span class="fbadge" id="fbadge-conflict">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="dispute">
+    <span class="fpulse"></span>
+    نزاع
+    <span class="fbadge" id="fbadge-dispute">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="political">
+    <span class="fpulse"></span>
+    سياسية
+    <span class="fbadge" id="fbadge-political">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="economic">
+    <span class="fpulse"></span>
+    اقتصادية
+    <span class="fbadge" id="fbadge-economic">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="combat">
+    <span class="fpulse"></span>
+    قتالية
+    <span class="fbadge" id="fbadge-combat">00</span>
+    </button>
+    <button class="feed-filter-btn" data-feed-filter="telegram">
+    <span class="fpulse"></span>
+    تليجرام
+    <span class="fbadge" id="fbadge-telegram">00</span>
+    </button>
+    </div>
+    <div class="feed-scroll"></div>
+  </div>
+  <div class="panel stream-panel">
+    <span class="br-bl"></span><span class="br-br"></span>
+    <div class="panel-head">
+      <h3><b>05</b> البث المباشر · القنوات والكاميرات</h3>
+      <button class="stream-switch-btn" id="stream-switch-btn" title="تبديل القناة">الجزيرة ⟳</button>
+    </div>
+  <div class="stream-body">
+    <iframe id="youtube-player" 
+      width="100%" 
+      height="100%" 
+      src="" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen
+      style="border:none;border-radius:2px;">
+    </iframe>
+  </div>
+  </div>
+</div>
+<div class="panel detail" id="detail"></div>
+</div>
+<div class="view-placeholder" id="view-placeholder" style="display:none"></div>
+<div class="hint">
+  <span><b>1-5</b>فلترة التصنيفات</span>
+  <span><b>سحب</b>تدوير الكرة</span>
+  <span><b>⌘K</b>الانتقال إلى مدينة</span>
+  <span><b>Esc</b>إغلاق اللوحة</span>
+</div>
+<div class="ticker">
+  <div class="ticker-label"><span class="dot"></span>البث المباشر</div>
+  <div class="ticker-track">
+    <div class="ticker-stream" id="ticker-stream"></div>
+  </div>
+  <div class="ticker-right">
+    <span>البث · طبيعي</span>
+    <span>التأخير · 42MS</span>
+  </div>
+</div>
+<script src="https://unpkg.com/globe.gl"></script>
+<script src="data.js"></script>
+<script src="app-v2.js"></script>
+<audio id="alert-critical" src="alert-critical.mp3" preload="auto"></audio>
+<audio id="alert-high" src="alert-high.mp3" preload="auto"></audio>
+</body>
+</html>
