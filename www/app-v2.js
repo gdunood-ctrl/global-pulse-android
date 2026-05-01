@@ -1,4 +1,36 @@
 const CATS = window.CATEGORIES;
+// ========== كشف نوع الجهاز ==========
+const isMobile = window.innerWidth <= 768;
+const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+const isDesktop = window.innerWidth > 1024;
+
+// ========== إذا كان هاتف أو آيباد، أعد ترتيب الواجهة ==========
+if (isMobile || isTablet) {
+  // حفظ المحتوى القديم مؤقتاً
+  const oldContent = document.body.innerHTML;
+  
+  // إنشاء هيكل جديد للشاشات الصغيرة
+  const appDiv = document.createElement('div');
+  appDiv.className = 'mobile-app';
+  appDiv.innerHTML = `
+    <div class="globe-area">
+      <div class="globe-wrap"><div id="globe"></div></div>
+    </div>
+    <div class="news-area">
+      <div class="filter-bar" id="mobile-filter-bar"></div>
+      <div class="news-list" id="mobile-news-list"></div>
+      <div class="bottom-tabs">
+        <div class="tab-icon active" data-tab="news">📰 الأخبار</div>
+        <div class="tab-icon" data-tab="map">🗺️ الخريطة</div>
+      </div>
+    </div>
+  `;
+  
+  document.body.innerHTML = '';
+  document.body.appendChild(appDiv);
+  document.body.style.overflow = 'hidden';
+  document.body.style.background = '#02040a';
+}
 const CITIES = window.CITIES;
 const GNEWS_API_KEY = window.GNEWS_API_KEY;
 const GNEWS_BASE_URL = window.GNEWS_BASE_URL;
@@ -86,7 +118,10 @@ loadLiveStream();
 function initWebSocket(){
 try{
 const protocol=window.location.protocol==='https:'?'wss:':'ws:';
-wsConnection=new WebSocket(`${protocol}//${window.location.host}`);
+const WS_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? `${protocol}//${window.location.host}`
+  : `wss://${window.location.host}`;
+wsConnection=new WebSocket(WS_BASE_URL);
 wsConnection.addEventListener('open',()=>{
 console.log('[WebSocket] متصل بالسيرفر');
 });
@@ -336,7 +371,10 @@ const bootLines = [
 ];
 async function fetchMilitaryNews() {
   try {
-    const response = await fetch("https://global-pulse-hzsv.onrender.com/api/news");
+    const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://127.0.0.1:3000' 
+      : `https://${window.location.hostname}`;
+    const response = await fetch(`${API_BASE_URL}/api/news`);
     if (!response.ok) return [];
     const data = await response.json();
     return data;
@@ -1151,5 +1189,45 @@ a.download=`global-pulse-${new Date().toISOString().slice(0,10)}.csv`;
 a.click();
 URL.revokeObjectURL(url);
 console.log('[Export] تم تصدير CSV - '+events.length+' حدث');
+}
+// ========== دوال خاصة بالهواتف والأجهزة اللوحية ==========
+if (isMobile || isTablet) {
+  function updateMobileFilters() {
+    const filterBar = document.getElementById('mobile-filter-bar');
+    if (!filterBar) return;
+    const categories = Object.keys(CATEGORIES || {});
+    filterBar.innerHTML = categories.map(cat => `
+      <button class="filter-chip ${activeFilters?.has(cat) ? 'active' : ''}" data-cat="${cat}">
+        ${cat}
+      </button>
+    `).join('');
+  }
+
+  function addMobileNews(newsItem) {
+    const newsList = document.getElementById('mobile-news-list');
+    if (!newsList) return;
+    const card = document.createElement('div');
+    card.className = 'news-card';
+    card.innerHTML = `
+      <div class="news-title">${newsItem.title || 'خبر عاجل'}</div>
+      <div class="news-source">${newsItem.source || 'مصدر'}</div>
+    `;
+    card.onclick = () => window.open(newsItem.url, '_blank');
+    newsList.appendChild(card);
+  }
+
+  // تعديل دالة loadRealNews لتحديث واجهة الهاتف
+  const originalLoadRealNews = window.loadRealNews;
+  if (originalLoadRealNews) {
+    window.loadRealNews = async function() {
+      await originalLoadRealNews();
+      updateMobileFilters();
+      if (events && events.length > 0) {
+        const newsList = document.getElementById('mobile-news-list');
+        if (newsList) newsList.innerHTML = '';
+        events.slice(0, 20).forEach(addMobileNews);
+      }
+    };
+  }
 }
 document.addEventListener('DOMContentLoaded', runBoot);
