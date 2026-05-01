@@ -21,38 +21,32 @@ jobs:
         run: |
           npm install
           npm install -D @capacitor/cli @capacitor/android
-          npx cap sync android
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Fix Kotlin version conflict
+      - name: Clean previous builds
         run: |
-          cd android
-          cat >> build.gradle << 'EOF'
+          rm -rf android/.gradle
+          rm -rf android/app/build
 
-          subprojects {
-              configurations.all {
-                  resolutionStrategy {
-                      force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
-                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
-                      force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
-                  }
-              }
-          }
-          EOF
+      - name: Sync Capacitor
+        run: npx cap sync android
 
-      - name: Build APK
+      - name: Build APK with retry
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew clean
+          ./gradlew assembleDebug --no-daemon --stacktrace
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dhttp.proxyHost= -Dhttp.proxyPort= -Dhttps.proxyHost= -Dhttps.proxyPort="
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
