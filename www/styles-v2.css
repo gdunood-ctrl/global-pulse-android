@@ -693,14 +693,10 @@ color:#ffcc00;
   .tab:nth-child(4) { display: none; }
 }
 @media (max-width: 768px) {
-  /* إظهار القائمة اليمنى (الأخبار) بدلاً من إخفائها */
-  .rail-l { display: none; }
-  .rail-r { display: flex; left: 8px; right: auto; width: 340px; }
+  .rail-l, .rail-r, .detail { display: none; }
   .stats-bar, .toolbar-section.tools, .toolbar-section.search-section { display: none; }
-  .top-chrome { top: 8px; right: 8px; left: auto; width: 240px; }
+  .top-chrome { top: calc(var(--class-h) + 8px); right: 8px; left: 8px; }
   .hint { display: none; }
-  /* جعل الخريطة تأخذ مساحة أكبر */
-  .globe-wrap { top: 70px; }
 }
 .keyword-search-wrapper{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:center;flex-direction:row-reverse;}
 .keyword-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--ink);padding:6px 10px;font-family:var(--mono);font-size:10px;border-radius:2px;transition:all 0.18s;}
@@ -712,89 +708,3 @@ color:#ffcc00;
 .keyword-clear-btn:hover{background:rgba(255,56,96,0.2);border-color:rgba(255,56,96,0.6);}
 .stream-switch-btn{background:rgba(76,201,240,0.1);border:1px solid rgba(76,201,240,0.3);color:#4cc9f0;padding:4px 8px;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;cursor:pointer;border-radius:2px;transition:all 0.18s;white-space:nowrap;margin-left:auto;}
 .stream-switch-btn:hover{background:rgba(76,201,240,0.2);border-color:rgba(76,201,240,0.6);}
-/* ============================================ */
-/* تحسينات خاصة للهواتف - لا تؤثر على الكمبيوتر */
-/* ============================================ */
-
-@media (max-width: 768px) {
-  /* إعادة ترتيب الصفحة بالكامل */
-  body {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto !important;
-    height: auto !important;
-  }
-  
-  /* تعديل الكرة الأرضية */
-  .globe-wrap {
-    position: relative !important;
-    height: 300px !important;
-    width: 100% !important;
-    top: auto !important;
-  }
-  
-  #globe {
-    height: 300px !important;
-    width: 100% !important;
-  }
-  
-  /* إظهار القوائم المخفية */
-  .rail-l, .rail-r {
-    display: block !important;
-    position: relative !important;
-    width: 100% !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    margin: 10px 0 !important;
-  }
-  
-  /* جعل القائمة الأفقية قابلة للتمرير */
-  .feed-filters {
-    overflow-x: auto !important;
-    white-space: nowrap !important;
-    flex-wrap: nowrap !important;
-  }
-  
-  /* تصغير حجم الخطوط */
-  .feed-title {
-    font-size: 12px !important;
-  }
-  
-  /* إخفاء العناصر غير الضرورية */
-  .toolbar-section.tools,
-  .toolbar-section.search-section,
-  .hint,
-  .globe-glow {
-    display: none !important;
-  }
-  
-  /* جعل شريط التبويبات يظهر */
-  .toolbar {
-    position: relative !important;
-    top: auto !important;
-    margin: 10px 0 !important;
-    height: auto !important;
-  }
-  
-  /* جعل الخريطة تظهر بشكل صحيح */
-  .globe-glow {
-    display: none !important;
-  }
-}
-
-/* تحسينات إضافية للشاشات الصغيرة جداً */
-@media (max-width: 480px) {
-  .feed-item {
-    padding: 8px !important;
-  }
-  
-  .feed-title {
-    font-size: 11px !important;
-  }
-  
-  .panel-head h3 {
-    font-size: 11px !important;
-  }
-}
